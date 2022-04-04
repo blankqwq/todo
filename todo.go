@@ -17,7 +17,6 @@ type Todo struct {
 // TodoListItem Json
 type TodoListItem struct {
 	Content string `json:"content"`
-	UserId  int    `json:"user_id"`
 	Status  int    `json:"status"`
 }
 
@@ -36,7 +35,6 @@ func (t *Todo) CreateTodo(str string) error {
 	}
 	item := &TodoListItem{
 		Content: str,
-		UserId:  0,
 		Status:  InCompleteStatus,
 	}
 	return d.Insert(item)

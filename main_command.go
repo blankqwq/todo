@@ -9,6 +9,7 @@ import (
 
 // NewOriginCli 原生解析args
 func NewOriginCli(args []string) {
+	//pass
 }
 
 // NewCli 获取第三方的cli程序
@@ -59,6 +60,42 @@ func NewCli() *cli.App {
 		{
 			Name:  "done",
 			Usage: "done a todo",
+			Action: func(ctx *cli.Context) error {
+				// 调用todo
+				idStr := ctx.Args().First()
+				id, err := strconv.Atoi(idStr)
+				if err != nil {
+					log.Fatalf("请输入正确的id")
+
+				}
+				err = TodoApp.ChangeTodoStatus(id, CompleteStatus)
+				if err != nil {
+					log.Fatalf("修改错误: %s", err)
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "login",
+			Usage: "login a user",
+			Action: func(ctx *cli.Context) error {
+				// 调用todo
+				idStr := ctx.Args().First()
+				id, err := strconv.Atoi(idStr)
+				if err != nil {
+					log.Fatalf("请输入正确的id")
+
+				}
+				err = TodoApp.ChangeTodoStatus(id, CompleteStatus)
+				if err != nil {
+					log.Fatalf("修改错误: %s", err)
+				}
+				return nil
+			},
+		},
+		{
+			Name:  "logout",
+			Usage: "logout",
 			Action: func(ctx *cli.Context) error {
 				// 调用todo
 				idStr := ctx.Args().First()

@@ -14,6 +14,7 @@ type FileDriver struct {
 	dataFile     *os.File
 	indexFile    *os.File
 	currentIndex int
+	currentUser  string
 }
 
 func (f *FileDriver) Find(id int) (string, error) {
@@ -101,7 +102,10 @@ func (f *FileDriver) Update(id int, data interface{}) error {
 				log.Printf("修改后数据为:%s", string(tempJson))
 				log.Printf("大小为:%d", seekLine)
 				_, _ = f.dataFile.Seek(int64(seekLine), 0)
-				f.dataFile.WriteString(fmt.Sprintf("%s\n", string(tempJson)))
+				_, err := f.dataFile.WriteString(fmt.Sprintf("%s\n", string(tempJson)))
+				if err != nil {
+					panic(err)
+				}
 				return nil
 			}
 		}
@@ -116,10 +120,14 @@ func (f *FileDriver) Delete(id int) error {
 }
 
 func (f *FileDriver) Free() error {
-	defer f.dataFile.Close()
-	defer f.indexFile.Close()
-	f.indexFile.Seek(0, 0)
-	f.indexFile.WriteString(fmt.Sprintf("%d", f.currentIndex))
+	defer func(dataFile *os.File) {
+		_ = dataFile.Close()
+	}(f.dataFile)
+	defer func(indexFile *os.File) {
+		_ = indexFile.Close()
+	}(f.indexFile)
+	_, _ = f.indexFile.Seek(0, 0)
+	_, _ = f.indexFile.WriteString(fmt.Sprintf("%d", f.currentIndex))
 	return nil
 }
 
@@ -154,11 +162,11 @@ func (f *FileDriver) writeData(id int, str string) {
 
 func (f *FileDriver) BootStrap() {
 	// 获取数据文件
-	err := f.initData()
+	err := f.getUser()
 	if err != nil {
 		panic(err)
 	}
-	err = f.initIndex()
+	err = f.getData()
 	if err != nil {
 		panic(err)
 	}
@@ -166,9 +174,23 @@ func (f *FileDriver) BootStrap() {
 	if err != nil {
 		panic(err)
 	}
+
+}
+
+func (f *FileDriver) getUser() error {
+	// .todo-users
+	f.currentUser = "default"
+	// .todo-current-user
+	return nil
 }
 
 func (f *FileDriver) getIndex() error {
+	file, err := getFile(fmt.Sprintf(".%s-todo-index", f.currentUser))
+	if err != nil {
+		log.Fatalf("打开文件失败: %s", err)
+		return err
+	}
+	f.indexFile = file
 	_, _ = f.indexFile.Seek(0, 0)
 	reader := bufio.NewReader(f.indexFile)
 	readBuf, _ := reader.ReadBytes(10)
@@ -186,22 +208,12 @@ func (f *FileDriver) getIndex() error {
 	return nil
 }
 
-func (f *FileDriver) initData() error {
-	file, err := getFile(".todo-list")
+func (f *FileDriver) getData() error {
+	file, err := getFile(fmt.Sprintf(".%s-todo-list", f.currentUser))
 	if err != nil {
 		return err
 	}
 	f.dataFile = file
-	return nil
-}
-
-func (f *FileDriver) initIndex() error {
-	file, err := getFile(".todo-index")
-	if err != nil {
-		log.Fatalf("打开文件失败: %s", err)
-		return err
-	}
-	f.indexFile = file
 	return nil
 }
 

@@ -83,6 +83,6 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/goland
 
-.todo-index
-.todo-list
+.*todo-index
+.*todo-list
 todo
