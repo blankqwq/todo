@@ -27,6 +27,23 @@ func NewTodo(config *Config) *Todo {
 	}
 }
 
+func (t *Todo) Login(str string) error {
+	d, err := t.GetDriver()
+	if err != nil {
+		return err
+	}
+	return d.Login(str, "123")
+}
+
+func (t *Todo) Logout() error {
+	d, err := t.GetDriver()
+	if err != nil {
+		return err
+	}
+	_ = d.Logout()
+	return nil
+}
+
 // CreateTodo 创建
 func (t *Todo) CreateTodo(str string) error {
 	d, err := t.GetDriver()

@@ -17,6 +17,18 @@ type FileDriver struct {
 	currentUser  string
 }
 
+func (f *FileDriver) Logout() error {
+	//TODO implement me
+	// 删除记录当前用户的文件
+	panic("implement me")
+}
+
+func (f *FileDriver) Login(username, password string) error {
+	//TODO implement me
+	// 创建当前登陆用户的文件
+	panic("implement me")
+}
+
 func (f *FileDriver) Find(id int) (string, error) {
 	if id < 0 {
 		return "", nil
@@ -132,7 +144,7 @@ func (f *FileDriver) Free() error {
 }
 
 func (f *FileDriver) Init() error {
-	//TODO 初始化
+	//TODO 初始化登陆用户对内容
 	panic("implement me")
 }
 

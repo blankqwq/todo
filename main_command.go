@@ -80,15 +80,12 @@ func NewCli() *cli.App {
 			Usage: "login a user",
 			Action: func(ctx *cli.Context) error {
 				// 调用todo
-				idStr := ctx.Args().First()
-				id, err := strconv.Atoi(idStr)
+				// 调用todo
+				userName := ctx.Args().First()
+				// 请输入密码 todo
+				err := TodoApp.Login(userName)
 				if err != nil {
-					log.Fatalf("请输入正确的id")
-
-				}
-				err = TodoApp.ChangeTodoStatus(id, CompleteStatus)
-				if err != nil {
-					log.Fatalf("修改错误: %s", err)
+					log.Fatalf("登陆错误: %s", err)
 				}
 				return nil
 			},
@@ -98,15 +95,9 @@ func NewCli() *cli.App {
 			Usage: "logout",
 			Action: func(ctx *cli.Context) error {
 				// 调用todo
-				idStr := ctx.Args().First()
-				id, err := strconv.Atoi(idStr)
+				err := TodoApp.Logout()
 				if err != nil {
-					log.Fatalf("请输入正确的id")
-
-				}
-				err = TodoApp.ChangeTodoStatus(id, CompleteStatus)
-				if err != nil {
-					log.Fatalf("修改错误: %s", err)
+					log.Fatalf("退出失败: %s", err)
 				}
 				return nil
 			},

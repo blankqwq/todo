@@ -8,4 +8,6 @@ type RepositoryDriver interface {
 	Find(id int) (string, error)
 	Init() error
 	Free() error
+	Logout() error
+	Login(username, password string) error
 }
